@@ -1,0 +1,185 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.tradeshift</groupId>
+  <artifactId>oasis-docbook-xsd</artifactId>
+  <packaging>bundle</packaging>
+  <version>5.0.0</version>
+  <name>OASIS DocBook XML schemas</name>
+  <url>http://docs.oasis-open.org/docbook/specs/docbook-5.0-spec.html</url>
+  <description>
+    DocBook is a general purpose XML schema particularly well suited to books and papers about computer hardware and
+    software (though it is by no means limited to these applications).
+  </description>
+  <inceptionYear>2006</inceptionYear>
+  <licenses>
+    <license>
+      <name>OASIS IPR Policy</name>
+      <url>http://www.oasis-open.org/policies-guidelines/ipr</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/Tradeshift/oasis-docbook-xsd</url>
+    <connection>scm:git:git://github.com/Tradeshift/oasis-docbook-xsd.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/Tradeshift/oasis-docbook-xsd.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <organization>
+    <name>Tradeshift</name>
+    <url>https://tradeshift.com</url>
+  </organization>
+
+  <developers>
+    <!-- Publisher of maven artifacts -->
+    <developer>
+      <id>tradeshift-tnn</id>
+      <name>Troels Norgaard</name>
+      <email>tnn@tradeshift.com</email>
+      <organization>Tradeshift</organization>
+      <roles>
+        <role>maintainer</role>
+      </roles>
+    </developer>
+
+    <!-- Original authors of specification -->
+    <developer>
+      <name>Robert Stayton</name>
+      <email>bobs@sagehill.net</email>
+      <roles>
+        <role>chair</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Norman Walsh</name>
+      <email>norman.walsh@marklogic.com</email>
+      <roles>
+        <role>editor</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.3.9</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Add OGSi manifest to jar -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.5.4</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              org.oasis-open.docbook.schemas
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+      <!-- Append Java sources -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Append JavaDoc artifacts-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Allow Sonatype (Maven central) staging deploys -->
+      <!-- Release documentation can be found at http://central.sonatype.org/pages/apache-maven.html -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.3</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- Signing of artifacts-->
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
+
